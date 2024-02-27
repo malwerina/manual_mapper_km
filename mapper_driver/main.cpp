@@ -38,7 +38,6 @@ typedef struct _KLDR_DATA_TABLE_ENTRY {
 
 
 KLDR_DATA_TABLE_ENTRY* g_Ntoskrnl = nullptr;
-NTSTATUS(NTAPI* IoCreateDriver)(PUNICODE_STRING Uni, PDRIVER_INITIALIZE DriverEntry) = nullptr;
 
 struct payl_data
 {
@@ -47,56 +46,6 @@ struct payl_data
 	void* entry_point;
 	void* param;
 };
-
-void enum_processes()
-{
-	ULONG buffer_size = 1000 * sizeof(SYSTEM_PROCESS_INFORMATION);
-	void* buffer = ExAllocatePoolWithTag(NonPagedPool, buffer_size, DRIVER_TAG);
-
-	NTSTATUS status = STATUS_SUCCESS;
-
-	while (true) {
-		if (!buffer) {
-			return;
-		}
-		ULONG retSize = 0;
-		status = ZwQuerySystemInformation(SystemProcessInformation, buffer, buffer_size, &retSize);
-		if (status == STATUS_SUCCESS) {
-			break;
-		}
-		// not successful:
-		ExFreePoolWithTag(buffer, DRIVER_TAG);
-
-		//try again:
-		if (status == STATUS_INFO_LENGTH_MISMATCH)
-		{
-			buffer_size = retSize;
-			buffer = ExAllocatePoolWithTag(NonPagedPool, buffer_size, DRIVER_TAG);
-			continue;
-		}
-		break;
-	}
-
-	if (status != STATUS_SUCCESS) {
-		ExFreePoolWithTag(buffer, DRIVER_TAG);
-		DbgPrint(DRIVER_PREFIX " ZwQuerySystemInformation failed: %X\n", status);
-		return;
-	}
-
-	SYSTEM_PROCESS_INFORMATION* pInfo = (SYSTEM_PROCESS_INFORMATION*)buffer;
-	while (pInfo)
-	{
-		DbgPrint(DRIVER_PREFIX " Next process: PID: %p", pInfo->UniqueProcessId);
-		if (pInfo->ImageName.Length) {
-			DbgPrint(DRIVER_PREFIX " name: %S ", pInfo->ImageName.Buffer);
-		}
-
-		if (!pInfo->NextEntryOffset) break;
-		pInfo = (SYSTEM_PROCESS_INFORMATION*)((PUCHAR)pInfo + pInfo->NextEntryOffset);
-	}
-
-	ExFreePoolWithTag(buffer, DRIVER_TAG);
-}
 
 DRIVER_OBJECT* open_and_dereference_systemroot()
 {
@@ -155,10 +104,6 @@ bool fetch_ntoskrnl()
 	while (next != DriverSection)
 	{
 		if (!next) break;
-
-		if (next->BaseDllName.Length) {
-			DbgPrint(DRIVER_PREFIX " Next device: %S\n", next->BaseDllName.Buffer);
-		}
 
 		if (RtlEqualUnicodeString(&(next->BaseDllName), &NtoskrnlStr, TRUE))// 'ntoskrnl.exe'
 		{
@@ -405,7 +350,7 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 		DbgPrint(DRIVER_PREFIX " Failed fetching Ntoskrnl\n");
 		return STATUS_INVALID_PARAMETER;
 	}
-	enum_processes();
+
 	UNICODE_STRING devName = RTL_CONSTANT_STRING(MY_DEVICE);
 
 	PDEVICE_OBJECT DeviceObject;
