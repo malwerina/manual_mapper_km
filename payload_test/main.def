@@ -1,0 +1,3 @@
+LIBRARY payload.sys
+EXPORTS
+  RunMain PRIVATE
