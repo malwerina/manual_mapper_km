@@ -1,6 +1,6 @@
 # kernel_mapper1
 
-Just a little demo of manulal PE mapping in kernel mode.
+Just a little demo of manual PE mapping in kernel mode.
 Elements:
 1. Mapper driver: it waits for the payloads, maps them, and run in a new kernel thread. The payload is reqired to have a function exported: `RunMe` with which the execution will start.
 2. Payload driver: a sample payload that can be sent to the manual mapper. It reqires a name of an executable as an argument. During its run, it will watch search for the process with the given name, and elevate it.
