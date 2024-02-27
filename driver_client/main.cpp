@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <iostream>
 
-#include "../driver_test1/common.h"
+#include "../mapper_driver/common.h"
 
 #define DRIVER_PATH  L"\\\\.\\MyDriver1"
 

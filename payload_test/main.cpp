@@ -2,42 +2,11 @@
 #include <ntddk.h>
 #include <wdm.h>
 
-#include "../driver_test1/undoc_api.h"
+#include "../mapper_driver/undoc_api.h"
 
 #define DRIVER_PREFIX "PayloadDrv"
 #define DRIVER_TAG 'dcba'
 
-/*
-typedef struct _EPROCESS {
-    UCHAR NotNeeded1[0x26C];
-    union {
-        ULONG Flags2;
-        struct {
-            ULONG JobNotReallyActive : 1;
-            ULONG AccountingFolded : 1;
-            ULONG NewProcessReported : 1;
-            ULONG ExitProcessReported : 1;
-            ULONG ReportCommitChanges : 1;
-            ULONG LastReportMemory : 1;
-            ULONG ReportPhysicalPageChanges : 1;
-            ULONG HandleTableRundown : 1;
-            ULONG NeedsHandleRundown : 1;
-            ULONG RefTraceEnabled : 1;
-            ULONG NumaAware : 1;
-            ULONG ProtectedProcess : 1;
-            ULONG DefaultPagePriority : 3;
-            ULONG PrimaryTokenFrozen : 1;
-            ULONG ProcessVerifierTarget : 1;
-            ULONG StackRandomizationDisabled : 1;
-            ULONG AffinityPermanent : 1;
-            ULONG AffinityUpdateEnable : 1;
-            ULONG PropagateNode : 1;
-            ULONG ExplicitAffinity : 1;
-        } KFlags3;
-    };
-    UCHAR NotNeeded2[0x50];
-} EPROCESS;
-*/
 void KernelSleep(ULONG milliseconds)
 {
 	ULONGLONG ms = milliseconds;
