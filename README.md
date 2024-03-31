@@ -7,4 +7,5 @@ Elements:
 3. Driver client: a usermode application that can be used for sending the payload to the driver, with specified parameter.
 
 Hey, what if I made a malicious contribution to this project, and pretend that this was another person?
+And what if I spoofed the user who did the malicious commit to the XZ repository? Would it work? What do you think?
 
